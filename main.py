@@ -1,5 +1,5 @@
 import argparse
-# import docker
+import docker
 
 from commands.run import run
 
@@ -12,7 +12,7 @@ COMMANDS = {
 
 
 def main():
-    # client = docker.from_env()
+    client = docker.from_env()
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest='command')
 
