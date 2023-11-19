@@ -1,6 +1,7 @@
 import argparse
 import docker
 from commands.exec import exec
+from commands.images import images
 from commands.ps import ps
 from commands.run import run
 from commands.push import push
@@ -12,8 +13,9 @@ COMMANDS = {
     'EXEC': 'exec',
     'BUILD': 'build',
     'PUSH': 'push',
-    'PULL' : 'pull',
-    'PS': 'ps'
+    'PULL': 'pull',
+    'PS': 'ps',
+    'IMAGES': 'images',
 }
 
 
@@ -36,6 +38,8 @@ def main():
         COMMANDS['EXEC'], help='Execute a command in a running container')
     ps_parser = subparsers.add_parser(
         COMMANDS['PS'], help='List containers')
+    images_parser = subparsers.add_parser(
+        COMMANDS['IMAGES'], help='List images')
 
     args = parser.parse_args()
 
@@ -51,6 +55,9 @@ def main():
         exec(client)
     elif args.command == COMMANDS['PS']:
         ps(client)
+    elif args.command == COMMANDS['IMAGES']:
+        images(client)
+
 
 if __name__ == '__main__':
     main()
