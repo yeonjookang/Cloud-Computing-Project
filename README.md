@@ -8,7 +8,7 @@ python3 -m venv .venv
 for OSX
 
 ```
-source .venv/bin/active
+source ./.venv/bin/active
 ```
 
 

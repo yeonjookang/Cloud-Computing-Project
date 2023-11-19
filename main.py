@@ -3,13 +3,16 @@ import docker
 from commands.exec import exec
 from commands.ps import ps
 from commands.run import run
+from commands.push import push
+from commands.pull import pull
 from commands.build import build
 
 COMMANDS = {
-    'ADD': 'add',  # example
     'RUN': 'run',
     'EXEC': 'exec',
     'BUILD': 'build',
+    'PUSH': 'push',
+    'PULL' : 'pull',
     'PS': 'ps'
 }
 
@@ -23,36 +26,30 @@ def main():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest='command')
 
-    add_parser = subparsers.add_parser(COMMANDS['ADD'], help='Add two numbers')
-    add_parser.add_argument('num1', type=int)
-    add_parser.add_argument('num2', type=int)
-
-    add_parser = subparsers.add_parser(COMMANDS['BUILD'], help='Build image')
-
     run_parser = subparsers.add_parser(
         COMMANDS['RUN'], help='Create Container')
-
+    push_parser = subparsers.add_parser(
+        COMMANDS['PUSH'], help='image push')
+    pull_parser = subparsers.add_parser(
+        COMMANDS['PULL'], help='image pull')
     exec_parser = subparsers.add_parser(
         COMMANDS['EXEC'], help='Execute a command in a running container')
-    # exec_parser.add_argument('container_id', type=str)
-
     ps_parser = subparsers.add_parser(
         COMMANDS['PS'], help='List containers')
 
     args = parser.parse_args()
 
-    if args.command == COMMANDS['ADD']:
-        result = args.num1 + args.num2
-        print(f'The sum is: {result}')
-    elif args.command == COMMANDS['RUN']:
+    if args.command == COMMANDS['RUN']:
         run(client)
+    elif args.command == COMMANDS['PUSH']:
+        push(client)
+    elif args.command == COMMANDS['PULL']:
+        pull(client)
     elif args.command == COMMANDS['BUILD']:
         build(client)
     elif args.command == COMMANDS['EXEC']:
-        # print(f'exec container id {args.container_id}')
         exec(client)
     elif args.command == COMMANDS['PS']:
-        # print(f'exec container id {args.container_id}')
         ps(client)
 
 if __name__ == '__main__':
