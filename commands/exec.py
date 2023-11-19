@@ -1,7 +1,7 @@
 from __future__ import print_function, unicode_literals
 from PyInquirer import style_from_dict, Token, prompt, Separator
 from pprint import pprint
-
+import subprocess
 
 style = style_from_dict({
     Token.Separator: '#cc5454',
@@ -110,5 +110,38 @@ def exec(container_id,client):
         }
     ]
     answers = prompt(questions, style=style)
-    client.containers.exec()
-    pprint(answers)
+    
+    # 도커 exec 명령어 구성
+    command = ['docker', 'exec']
+    
+    # 사용자의 선택에 따라 명령어에 옵션 추가
+    if answers.get('--detach'):
+        command.append('-d')
+    if answers.get('--detach-key'):
+        command.extend(['--detach-keys', answers['--detach-key arg']])
+    if answers.get('--env'):
+        if 'file' in answers['--env way']:
+            command.extend(['--env-file', answers['--env file_path']])
+        if 'input key-value string' in answers['--env way']:
+            command.extend(['-e', answers['--env key_value']])
+    if answers.get('--interactive'):
+        command.append('-i')
+    if answers.get('--privileged'):
+        command.append('--privileged')
+    if answers.get('--tty'):
+        command.append('-t')
+    if answers.get('--user'):
+        command.extend(['-u', answers['--user arg']])
+    if answers.get('--workdir'):
+        command.extend(['-w', answers['--workdir arg']])
+    
+    # 마지막으로 컨테이너 ID 추가
+    command.append(container_id)
+
+    # 명령어 실행
+    try:
+        subprocess.run(command)
+    except Exception as e:
+        print(f"Error executing docker command: {e}")
+
+    exec(container_id)
