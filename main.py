@@ -2,6 +2,7 @@ import argparse
 import docker
 
 from commands.run import run
+from commands.build import build
 
 COMMANDS = {
     'ADD': 'add',  # example
@@ -24,6 +25,8 @@ def main():
     add_parser.add_argument('num1', type=int)
     add_parser.add_argument('num2', type=int)
 
+    add_parser = subparsers.add_parser(COMMANDS['BUILD'], help='Build image')
+
     run_parser = subparsers.add_parser(
         COMMANDS['RUN'], help='Create Container')
 
@@ -34,7 +37,8 @@ def main():
         print(f'The sum is: {result}')
     elif args.command == COMMANDS['RUN']:
         run(client)
-
+    elif args.command == COMMANDS['BUILD']:
+        build(client)
 
 if __name__ == '__main__':
     main()
