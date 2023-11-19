@@ -23,7 +23,7 @@ def main():
         COMMANDS['RUN'], help='Create Container')
     
     exec_parser = subparsers.add_parser(COMMANDS['EXEC'], help='Execute a command in a running container')
-    exec_parser.add_argument('container_id', type=str)
+    #exec_parser.add_argument('container_id', type=str)
 
     args = parser.parse_args()
 
@@ -33,8 +33,8 @@ def main():
     elif args.command == COMMANDS['RUN']:
         run()
     elif args.command == COMMANDS['EXEC']:
-        print(f'exec container id {args.container_id}')
-        exec(args.container_id,client)        
+        #print(f'exec container id {args.container_id}')
+        exec(client)        
 
 if __name__ == '__main__':
     main()

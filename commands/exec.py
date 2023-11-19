@@ -1,6 +1,7 @@
 from __future__ import print_function, unicode_literals
 from PyInquirer import style_from_dict, Token, prompt, Separator
 from pprint import pprint
+from docker import DockerClient
 import subprocess
 
 style = style_from_dict({
@@ -14,134 +15,71 @@ style = style_from_dict({
     Token.Question: '',
 })
 
-def exec(container_id,client):
+def exec(client: DockerClient | None):
     questions = [
         {
-            'type':'confirm',
-            'name':'--detach',
-            'message':'Do you want Detached Mode?(run command in the background)',
-            'default':False
+            'type': 'input',
+            'name': 'container_name',
+            'message': 'Enter the name or ID of the container:'
         },
         {
-            'type':'confirm',
-            'name':'--detach-key',
-            'message':'Do you want to override the key sequence for detaching a container?',
-            'default':False
-        },
-        {
-            'type':'input',
-            'name':'--detach-key arg',
-            'message':'Enter the key sequence with comma: ',
-            'when': lambda answers: answers['--detach']
-        },
-        {
-            'type':'confirm',
-            'name':'--env',
-            'message':'Do you want to set environment variables?',
-            'default':False
-        },
-        {
-            'type':'checkbox',
-            'name':'--env way',
-            'message':'by file? or by input key-value string?',
-            'choices':[
-                {
-                    'name':'file'
-                },
-                {
-                    'name':'input key-value string'
-                }
-            ],
-            'when': lambda answers: answers['--env']
+            'type': 'confirm',
+            'name': 'interactive',
+            'message': 'Do you want to keep STDIN open and allocate a pseudo-TTY (interactive mode)?',
+            'default': False
         },
         {
             'type': 'input',
-            'name': '--env file_path',
-            'message': 'Enter the file path:',
-            'when': lambda answers: 'file' in answers['--env way']
+            'name': 'command',
+            'message': 'Enter the command you want to execute:'
         },
         {
             'type': 'input',
-            'name': '--env key_value',
-            'message': 'Enter key-value pair:',
-            'when': lambda answers: 'input key-value string' in answers['--env way']
+            'name': 'workdir',
+            'message': 'Enter the working directory (optional):',
+            'default': ''
         },
         {
-            'type':'confirm',
-            'name':'--interactive',
-            'message':'Do you want to keep STDIN open even if not attached?',
-            'default':False
+            'type': 'input',
+            'name': 'user',
+            'message': 'Enter the username or UID (optional):',
+            'default': ''
+        },
+        # Add more options here as required
+        {
+            'type': 'confirm',
+            'name': 'detach',
+            'message': 'Do you want to run the command in the background (detached mode)?',
+            'default': False
         },
         {
-            'type':'confirm',
-            'name':'--privileged',
-            'message':'Do you want to give extended privileges to the command?',
-            'default':False
-        },
-        {
-            'type':'confirm',
-            'name':'--tty',
-            'message':'Do you want to allocate a pseudo-TTY?',
-            'default':False
-        },
-        {
-            'type':'confirm',
-            'name':'--user',
-            'message':'Do you want to specify username or UID?',
-            'default':False
-        },
-        {
-            'type':'input',
-            'name':'--user arg',
-            'message':'Enter the username or uid: ',
-            'when': lambda answers: answers['--user']
-        },
-        {
-            'type':'confirm',
-            'name':'--workdir',
-            'message':'Do you want working directory inside the container?',
-            'default':False
-        },
-        {
-            'type':'input',
-            'name':'--workdir arg',
-            'message':'Enter the dir path: ',
-            'when': lambda answers: answers['--workdir']
+            'type': 'input',
+            'name': 'env_vars',
+            'message': 'Enter any environment variables (comma-separated key=value pairs, e.g., VAR1=value1,VAR2=value2):',
+            'default': ''
         }
     ]
-    answers = prompt(questions, style=style)
-    
-    # 도커 exec 명령어 구성
-    command = ['docker', 'exec']
-    
-    # 사용자의 선택에 따라 명령어에 옵션 추가
-    if answers.get('--detach'):
-        command.append('-d')
-    if answers.get('--detach-key'):
-        command.extend(['--detach-keys', answers['--detach-key arg']])
-    if answers.get('--env'):
-        if 'file' in answers['--env way']:
-            command.extend(['--env-file', answers['--env file_path']])
-        if 'input key-value string' in answers['--env way']:
-            command.extend(['-e', answers['--env key_value']])
-    if answers.get('--interactive'):
-        command.append('-i')
-    if answers.get('--privileged'):
-        command.append('--privileged')
-    if answers.get('--tty'):
-        command.append('-t')
-    if answers.get('--user'):
-        command.extend(['-u', answers['--user arg']])
-    if answers.get('--workdir'):
-        command.extend(['-w', answers['--workdir arg']])
-    
-    # 마지막으로 컨테이너 ID 추가
-    command.append(container_id)
+    answers = prompt(questions)
 
-    # 명령어 실행
     try:
-        subprocess.run(command)
-    except Exception as e:
-        print(f"Error executing docker command: {e}")
+        if answers['interactive'] and answers['command'] == 'bash':
+            subprocess.run(['docker', 'exec', '-it', answers['container_name'], 'bash'])
+        else:
+            # ... [기존 exec_run 사용 코드] ...
+            # Prepare environment variables
+            env_vars = answers['env_vars'].split(',') if answers['env_vars'] else None
 
-    exec(container_id)
+            container = client.containers.get(answers['container_name'])
+            exec_instance = container.exec_run(
+                cmd=answers['command'],
+                environment=env_vars,
+                detach=answers['detach']
+            )
+
+            # Fetching output for non-detached mode
+            if not answers['detach']:
+                print(exec_instance.output.decode("utf-8"))
+        
+
+    except Exception as e:
+        print(f"API error: {e}")
