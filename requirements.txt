@@ -8,6 +8,7 @@ packaging==23.2
 prompt-toolkit==1.0.14
 Pygments==2.17.1
 PyInquirer==1.0.3
+python-dateutil==2.8.2
 regex==2023.10.3
 requests==2.31.0
 rich==13.7.0
