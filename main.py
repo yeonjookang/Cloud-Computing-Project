@@ -1,6 +1,7 @@
 import argparse
 import docker
 from commands.exec import exec
+from commands.ps import ps
 from commands.run import run
 
 COMMANDS = {
@@ -45,6 +46,9 @@ def main():
     elif args.command == COMMANDS['EXEC']:
         # print(f'exec container id {args.container_id}')
         exec(client)
+    elif args.command == COMMANDS['PS']:
+        # print(f'exec container id {args.container_id}')
+        ps(client)
 
 
 if __name__ == '__main__':
