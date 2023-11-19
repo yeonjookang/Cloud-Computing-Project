@@ -84,7 +84,5 @@ def run(client: DockerClient | None):
             detach=True
         )
         print(container.logs())
-        container.stop()
-        container.remove()
     except:
         print(f"API error")

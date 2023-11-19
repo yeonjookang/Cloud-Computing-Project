@@ -5,7 +5,7 @@ python3 -m venv .venv
 ```
 
 ```
-source .venv/bin/active
+source ./.venv/bin/active
 ```
 
 ```

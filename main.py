@@ -2,12 +2,16 @@ import argparse
 import docker
 
 from commands.run import run
+from commands.push import push
+from commands.pull import pull
 
 COMMANDS = {
     'ADD': 'add',  # example
     'RUN': 'run',
     'EXEC': 'exec',
-    'BUILD': 'build'
+    'BUILD': 'build',
+    'PUSH': 'push',
+    'PULL' : 'pull'
 }
 
 
@@ -27,6 +31,12 @@ def main():
     run_parser = subparsers.add_parser(
         COMMANDS['RUN'], help='Create Container')
 
+    push_parser = subparsers.add_parser(
+        COMMANDS['PUSH'], help='image push')
+
+    pull_parser = subparsers.add_parser(
+        COMMANDS['PULL'], help='image pull')
+
     args = parser.parse_args()
 
     if args.command == COMMANDS['ADD']:
@@ -34,6 +44,10 @@ def main():
         print(f'The sum is: {result}')
     elif args.command == COMMANDS['RUN']:
         run(client)
+    elif args.command == COMMANDS['PUSH']:
+        push(client)
+    elif args.command == COMMANDS['PULL']:
+        pull(client)
 
 
 if __name__ == '__main__':
