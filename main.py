@@ -12,7 +12,11 @@ COMMANDS = {
 
 
 def main():
-    client = docker.from_env()
+    try:
+        client = docker.from_env()
+    except:
+        client = None
+
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest='command')
 
@@ -29,7 +33,7 @@ def main():
         result = args.num1 + args.num2
         print(f'The sum is: {result}')
     elif args.command == COMMANDS['RUN']:
-        run()
+        run(client)
 
 
 if __name__ == '__main__':
