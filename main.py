@@ -11,7 +11,11 @@ COMMANDS = {
 }
 
 def main():
-    client = docker.from_env()
+    try:
+        client = docker.from_env()
+    except:
+        client = None
+
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest='command')
 
