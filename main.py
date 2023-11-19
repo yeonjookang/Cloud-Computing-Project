@@ -7,8 +7,10 @@ COMMANDS = {
     'ADD': 'add',  # example
     'RUN': 'run',
     'EXEC': 'exec',
-    'BUILD': 'build'
+    'BUILD': 'build',
+    'PS': 'ps'
 }
+
 
 def main():
     try:
@@ -25,9 +27,13 @@ def main():
 
     run_parser = subparsers.add_parser(
         COMMANDS['RUN'], help='Create Container')
-    
-    exec_parser = subparsers.add_parser(COMMANDS['EXEC'], help='Execute a command in a running container')
-    #exec_parser.add_argument('container_id', type=str)
+
+    exec_parser = subparsers.add_parser(
+        COMMANDS['EXEC'], help='Execute a command in a running container')
+    # exec_parser.add_argument('container_id', type=str)
+
+    ps_parser = subparsers.add_parser(
+        COMMANDS['PS'], help='List containers')
 
     args = parser.parse_args()
 
@@ -35,10 +41,11 @@ def main():
         result = args.num1 + args.num2
         print(f'The sum is: {result}')
     elif args.command == COMMANDS['RUN']:
-        run()
+        run(client)
     elif args.command == COMMANDS['EXEC']:
-        #print(f'exec container id {args.container_id}')
-        exec(client)        
+        # print(f'exec container id {args.container_id}')
+        exec(client)
+
 
 if __name__ == '__main__':
     main()
