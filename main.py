@@ -1,6 +1,6 @@
 import argparse
 import docker
-
+from commands.exec import exec
 from commands.run import run
 
 COMMANDS = {
@@ -9,7 +9,6 @@ COMMANDS = {
     'EXEC': 'exec',
     'BUILD': 'build'
 }
-
 
 def main():
     try:
@@ -26,6 +25,9 @@ def main():
 
     run_parser = subparsers.add_parser(
         COMMANDS['RUN'], help='Create Container')
+    
+    exec_parser = subparsers.add_parser(COMMANDS['EXEC'], help='Execute a command in a running container')
+    #exec_parser.add_argument('container_id', type=str)
 
     args = parser.parse_args()
 
@@ -33,8 +35,10 @@ def main():
         result = args.num1 + args.num2
         print(f'The sum is: {result}')
     elif args.command == COMMANDS['RUN']:
-        run(client)
-
+        run()
+    elif args.command == COMMANDS['EXEC']:
+        #print(f'exec container id {args.container_id}')
+        exec(client)        
 
 if __name__ == '__main__':
     main()
