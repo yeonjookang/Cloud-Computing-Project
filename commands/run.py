@@ -20,6 +20,11 @@ def run(client: DockerClient | None):
     image = client.images.get(image_name)
     history = image.history()
 
+    model = load_model('docker_run_model.h5')
+    predictions = model.predict(history)
+
+    predicted_command_options = np.argmax(predictions, axis=-1)
+
     questions = [
         {
             'type': 'input',
