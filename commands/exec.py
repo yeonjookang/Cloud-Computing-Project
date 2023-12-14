@@ -8,7 +8,7 @@ style = style_from_dict({
     Token.Separator: '#cc5454',
     Token.QuestionMark: '#673ab7 bold',
     Token.Selected: '#cc5454',  # default
-    
+
     Token.Pointer: '#673ab7 bold',
     Token.Instruction: '',  # default
     Token.Answer: '#f44336 bold',
@@ -79,7 +79,7 @@ def exec(client: DockerClient | None):
             # Fetching output for non-detached mode
             if not answers['detach']:
                 print(exec_instance.output.decode("utf-8"))
-        
+
 
     except Exception as e:
         print(f"API error: {e}")

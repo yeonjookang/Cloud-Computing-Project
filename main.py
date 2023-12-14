@@ -36,6 +36,8 @@ def main():
         COMMANDS['PULL'], help='image pull')
     exec_parser = subparsers.add_parser(
         COMMANDS['EXEC'], help='Execute a command in a running container')
+    build_parser = subparsers.add_parser(
+        COMMANDS['BUILD'], help='Build image')
     ps_parser = subparsers.add_parser(
         COMMANDS['PS'], help='List containers')
     images_parser = subparsers.add_parser(
