@@ -7,6 +7,7 @@ from commands.run import run
 from commands.push import push
 from commands.pull import pull
 from commands.build import build
+from commands.ctop import ctop
 
 COMMANDS = {
     'RUN': 'run',
@@ -16,6 +17,7 @@ COMMANDS = {
     'PULL': 'pull',
     'PS': 'ps',
     'IMAGES': 'images',
+    'TOP': 'top'
 }
 
 
@@ -42,6 +44,8 @@ def main():
         COMMANDS['PS'], help='List containers')
     images_parser = subparsers.add_parser(
         COMMANDS['IMAGES'], help='List images')
+    top_parser=subparsers.add_parser(
+        COMMANDS['TOP'], help='show container information')
 
     args = parser.parse_args()
 
@@ -59,6 +63,8 @@ def main():
         ps(client)
     elif args.command == COMMANDS['IMAGES']:
         images(client)
+    elif args.command==COMMANDS['TOP']:
+        ctop()
 
 
 if __name__ == '__main__':
